@@ -1,69 +1,41 @@
 package org.example.task2;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Cart {
+    private final List<Item> items = new ArrayList<>();
 
-    public Item[] contents;
-    int index;
-
-    Cart(Item[] _contents) {
-        this.contents = _contents;
+    public void add(Item item) {
+        if (item == null) throw new IllegalArgumentException("item is null");
+        items.add(item);
     }
 
-    public void removeById(int itemIndex) {
-
-        if (index == 0)
-            return;
-
-        int foundItemIndex = findItemInArray(contents[itemIndex]);
-
-        if (foundItemIndex == -1)
-            return;
-
-        if (foundItemIndex == index - 1) {
-            contents[index - 1] = null;
-            index--;
-            return;
-        }
-
-        shiftArray(foundItemIndex);
-    }
-
-    public void shiftArray(int itemIndex) {
-        for (int i = itemIndex; i < index - 1; i++) {
-            contents[i] = contents[i + 1];
-        }
-        contents[index-1] = null;
-        index--;
-    }
-
-    public int findItemInArray(Item item) {
-        for (int i = 0; i < index; i++) {
-            if (contents[i].id == item.id) {
-                return i;
+    public boolean removeById(long id) {
+        Iterator<Item> it = items.iterator();
+        while (it.hasNext()) {
+            if (it.next().getId() == id) {
+                it.remove();
+                return true;
             }
         }
-
-        return -1;
+        return false;
     }
 
-    void add(Item item) {
-        if (isCartFull())
-            return;
+    public int size() { return items.size(); }
 
-        contents[index] = item;
-        index++;
+    public double total() {
+        double sum = 0.0;
+        for (Item i : items) sum += i.getPrice();
+        return sum;
     }
 
-    public boolean isCartFull() {
-        return index == contents.length;
+    public List<Item> getItems() {
+        return List.copyOf(items);
     }
 
-    @Override
-    public String toString() {
-        return "Cart{" +
-                "contents=" + Arrays.toString(contents) +
-                '}' + "\n";
+    @Override public String toString() {
+        return "Cart{items=" + items + "}";
     }
 }
